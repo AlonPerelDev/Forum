@@ -1,0 +1,70 @@
+<%- //include("partials/header.ejs") %>
+<% let posts = locals.var.postsList %>
+<% let lastPost = locals.var.last %>
+
+<script>  
+    </script>
+
+<% function printReplies (post) { %>
+  <% if (post.replies.length > 0 ) {%>
+    <% for (let index = 0; index < post.replies.length; index++) { %>
+      <% let spacing = "response" + (post.level + 1) %>
+      <% let hiddenReplySpacing = "response" + (post.level + 2) %>
+      <% let fullID = (JSON.stringify(post.replies[index].originalPostID) + JSON.stringify(post.replies[index].replyID)).split("\"").join("");%>
+      <% //console.log("post's level: ",post.replies[index].level) %>
+      <form action="/submit" method="POST">
+        <textarea ondblclick="dblClickEvt(event)" readonly="readonly" id=<%- spacing %> name=<%=fullID%> style='this.style.height = "";this.style.height = this.scrollHeight + 3 + "px"' ><%= post.replies[index].content %></textarea><br>
+        <textarea hidden type="text" name=<%=fullID%> id=<%=hiddenReplySpacing%> oninput='this.style.height = "";this.style.height = this.scrollHeight + 3 + "px"'></textarea>
+        <input hidden type="submit" value="Submit" name=<%=fullID%> formaction="/submitReply" method="POST">
+        <button hidden onclick=replyUnhide(event) type="button" name=<%=fullID%>>Reply</button>
+        <textarea hidden name="id"><%=fullID%></textarea>
+      </form>
+      <% printReplies(post.replies[index]) %>
+    <% } %>
+  <% } %>
+<% } %>
+
+<% for (let index=0; index < posts.length; index++) {  %>
+  <% let currentPost = posts[index]; %>
+  <% let spacing="response" + (currentPost.level + 1) %>
+  <% let hiddenReplySpacing="response" + (currentPost.level + 2) %>
+  <% let fullID=JSON.stringify(currentPost.postID)%>
+  <form action="/submit" method="POST">
+    <input maxlength="2" readonly="readonly" type="text" name="fname" value=<%=currentPost.topic %>><br>
+    <textarea ondblclick="dblClickEvt(event)" readonly="readonly" name = <%=fullID%> oninput='this.style.height = "";this.style.height = this.scrollHeight + 3 + "px"'><%= currentPost.content %></textarea><br>
+    <textarea hidden type="text" name=<%=fullID%> id=<%=hiddenReplySpacing%> oninput='this.style.height = "";this.style.height = this.scrollHeight + 3 + "px"'></textarea>
+    <input hidden type="submit" value="Submit" name=<%=fullID%> formaction="/submitReply" method="POST">
+    <button hidden onclick=replyUnhide(event) type="button" name=<%=fullID%>>Reply</button>
+    <textarea hidden name="id"><%=fullID%></textarea>
+  </form>
+  <% printReplies(currentPost) %>
+<% } %>
+
+  <% let fullID="P" + (lastPost + 1)%>
+  <form action="/submit" method="POST">
+    <input maxlength="30" type="text" name=<%=fullID%> value=><br>
+    <textarea type="text" name=<%=fullID%> oninput='this.style.height = "";this.style.height = this.scrollHeight + 3 + "px"'></textarea><br>
+    <input  type="submit" value="Submit" name=<%=fullID%> formaction="/submitNewPost" method="POST">
+    <button  onclick=replyUnhide(event) type="button" name=<%=fullID%>>Reply</button>
+    <textarea hidden name="id"><%=fullID%></textarea>
+  </form>
+
+<h1> <%= //posts[0] %> </h1>
+
+<script>
+  function dblClickEvt(event) {
+    console.log("index.ejs dblClickevt()")
+    //event.target.removeAttribute('readonly')
+    let replyToUnhide = event.target.name
+    console.log(replyToUnhide)
+    document.getElementsByName(replyToUnhide)[3].removeAttribute('hidden')
+  }
+
+  function replyUnhide(event) {
+    let replyToUnhide = event.target.name //the button has the info in its name TAG, same one used on the textarea to unhide.
+    document.getElementsByName(replyToUnhide)[1].removeAttribute('hidden')
+    document.getElementsByName(replyToUnhide)[2].removeAttribute('hidden')
+  }
+  </script>
+
+  <%-// include("partials/footer.ejs") %>
