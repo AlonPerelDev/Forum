@@ -1,0 +1,4 @@
+So, this is a sort of forums structure. there's some authentication inside that was never implemented. the .css file has been decoupled from the .ejs file. currently the messages all get deleted everytime you run it. If that needs to be chaned just make it load from the file.
+The design could use some improvement. a lot of improvement :).
+But, anyway, I've achieved the sort of, main functionality: create new posts. reply to posts. which was more difficult than I had expected, but to be fair I did make some constraints, like not using a database, and storing the paths to each message within the post's index so to speak.
+The path is stored as a string, and made into an object when accessed xD, that's honestly not a great thing, but it is exactly how I wanted to do it. Which doesn't make it good. just makes me stubborn I guess.
